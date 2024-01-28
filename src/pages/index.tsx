@@ -55,55 +55,7 @@ const Todo = (props) => {
 };
 
 
-const AddModal = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const initialRef = React.useRef(null)
-  const finalRef = React.useRef(null)
-
-  return (
-    <>
-      <Button onClick={onOpen}
-        width="80px"
-        height="80px"
-        borderRadius="100%"
-        bgColor="purple.700"
-        color="white"
-        fontSize="40px"
-        fontWeight="light"
-        float="right"
-        mt="40px"
-        mr="20px">
-        +
-      </Button>
-
-      <Modal
-        initialFocusRef={initialRef}
-        finalFocusRef={finalRef}
-        isOpen={isOpen}
-        onClose={onClose}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>タスクの追加</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <Input ref={initialRef} placeholder='TODOを入力...' />
-            </FormControl>
-          </ModalBody>
-
-          <ModalFooter>
-            <Button onClick={onClose} mr={3}>キャンセル</Button>
-            <Button colorScheme='blue'>
-              保存
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-  )
-}
 
 
 
@@ -117,6 +69,21 @@ export default function Home() {
     { id: 4, text: "特別なレシピに必要な材料を揃える", isCompleted: true },
     { id: 5, text: "お気に入りのコーヒー豆を補充する", isCompleted: true },
   ]);
+
+  const handleAddTextSubmit = (text: string) => {
+    const newTodos = [...todos];
+    newTodos.push({
+      id: Date.now(),
+      text: text,
+      isCompleted: false
+    });
+    setTodos(newTodos);
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleAddTextSubmit(text);
+  }
 
   const handleTodoCheckboxChange = (id: number) => {
     const newTodos = todos.map((todo) => {
@@ -153,6 +120,17 @@ export default function Home() {
     }
   });
 
+  const [text, setText] = React.useState("");
+
+  const handleTextChange = (e) => {
+    setText(e.currentTarget.value);
+  }
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const initialRef = React.useRef(null)
+  const finalRef = React.useRef(null)
+
   return (
     <ChakraProvider>
       <Box w="fit-content" m="40px auto">
@@ -174,9 +152,52 @@ export default function Home() {
           </Stack>
 
         </Box>
-        <AddModal />
+        <Button onClick={onOpen}
+          width="80px"
+          height="80px"
+          borderRadius="100%"
+          bgColor="purple.700"
+          color="white"
+          fontSize="40px"
+          fontWeight="light"
+          float="right"
+          mt="40px"
+          mr="20px"
+        >
+          +
+        </Button>
+
+        <Modal
+          initialFocusRef={initialRef}
+          finalFocusRef={finalRef}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <form onSubmit={handleSubmit}>
+              <ModalHeader>タスクの追加</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <FormControl>
+                  <Input
+                    ref={initialRef}
+                    placeholder='TODOを入力...'
+                    value={text}
+                    onChange={handleTextChange}
+                  />
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button onClick={onClose} mr={3}>キャンセル</Button>
+                <Button colorScheme='blue' type="submit" >
+                  保存
+                </Button>
+              </ModalFooter>
+            </form>
+          </ModalContent>
+        </Modal>
       </Box>
-      
     </ChakraProvider>
   );
 }
