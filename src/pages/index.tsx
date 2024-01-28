@@ -10,6 +10,17 @@ import { Stack, HStack, VStack } from '@chakra-ui/react'
 import { after } from "node:test";
 
 
+const CurrentDate = () => {
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const day =  today.getDate();
+
+  return year + '年' + month + '月' + day + '日'
+};
+
+
 
 const Todo = (props) => {
   const handleCheckboxChange = () => {
@@ -77,7 +88,9 @@ export default function Home() {
   return (
     <ChakraProvider>
       <Box w="fit-content" m="40px auto">
-        <Heading marginBottom="12px">日付</Heading>
+        <Heading marginBottom="12px">
+          <CurrentDate />
+        </Heading>
         <Box w="520px" bg="orange.50" p="40px 50px">
           <Text marginBottom={8} fontWeight="bold">
             未完了
