@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "@/styles/Home.module.css";
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 
 import { Heading, Box, Button, Text, Center } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react'
@@ -59,8 +59,10 @@ const Todo = (props) => {
 
 
 
+
 // 全体の表示
 export default function Home() {
+  const [text, setText] = React.useState("");
   const [todos, setTodos] = useState([
     { id: 0, text: "食料品を買い物リストに追加する", isCompleted: false },
     { id: 1, text: "新しい調味料を試してみる", isCompleted: false },
@@ -69,6 +71,13 @@ export default function Home() {
     { id: 4, text: "特別なレシピに必要な材料を揃える", isCompleted: true },
     { id: 5, text: "お気に入りのコーヒー豆を補充する", isCompleted: true },
   ]);
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const initialRef = React.useRef(null)
+  const finalRef = React.useRef(null)
+
+
 
   const handleAddTextSubmit = (text: string) => {
     const newTodos = [...todos];
@@ -96,40 +105,43 @@ export default function Home() {
     setTodos(newTodos);
   };
 
-  const pendingTodos = todos.map((todo) => {
-    if (todo.isCompleted === false) {
-      return (
-        <Todo
-          key={todo.id}
-          todo={todo}
-          onCheckboxChange={handleTodoCheckboxChange}
-        />
-      );
-    }
-  });
+  const pendingTodos = useMemo(() => {
+    const pendingItems = todos.map(todo => {
+      if (!todo.isCompleted) {
+        return (
+          <Todo
+            key={todo.id}
+            todo={todo}
+            onCheckboxChange={handleTodoCheckboxChange}
+          />
+        );
+      }
+    });
+    return pendingItems
+  }, [todos]);
 
-  const completedTodos = todos.map((todo) => {
-    if (todo.isCompleted === true) {
-      return (
-        <Todo
-          key={todo.id}
-          todo={todo}
-          onCheckboxChange={handleTodoCheckboxChange}
-        />
-      );
-    }
-  });
 
-  const [text, setText] = React.useState("");
+  const completedTodos = useMemo(() => {
+    const completedItems = todos.map((todo) => {
+      if (todo.isCompleted) {
+        return (
+          <Todo
+            key={todo.id}
+            todo={todo}
+            onCheckboxChange={handleTodoCheckboxChange}
+          />
+        );
+      }
+    });
+    return completedItems;
+  },[todos]);
+
 
   const handleTextChange = (e) => {
     setText(e.currentTarget.value);
   }
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
 
-  const initialRef = React.useRef(null)
-  const finalRef = React.useRef(null)
 
   return (
     <ChakraProvider>
