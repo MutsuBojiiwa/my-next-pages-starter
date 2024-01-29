@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react'
 import { Input } from '@chakra-ui/react'
 import { useDisclosure } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
 
 
 
@@ -53,6 +54,8 @@ const Todo = (props) => {
     </Checkbox>
   );
 };
+
+
 
 
 
@@ -134,12 +137,14 @@ export default function Home() {
       }
     });
     return completedItems;
-  },[todos]);
+  }, [todos]);
 
 
   const handleTextChange = (e) => {
     setText(e.currentTarget.value);
   }
+
+  const toast = useToast();
 
 
 
@@ -202,7 +207,15 @@ export default function Home() {
               </ModalBody>
               <ModalFooter>
                 <Button onClick={onClose} mr={3}>キャンセル</Button>
-                <Button colorScheme='blue' type="submit" >
+                <Button colorScheme='blue' type="submit"
+                  onClick={() =>
+                    toast({
+                      title: 'TODOタスクを保存しました',
+                      status: 'success',
+                      duration: 3000,
+                      isClosable: true,
+                    })
+                  }>
                   保存
                 </Button>
               </ModalFooter>
