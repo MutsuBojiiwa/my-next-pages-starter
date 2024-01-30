@@ -1,31 +1,18 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "@/styles/Home.module.css";
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react';
 
 import { Heading, Box, Button, Text, Center } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react'
 import { Checkbox, CheckboxGroup } from '@chakra-ui/react'
 import { Stack, HStack, VStack } from '@chakra-ui/react'
 import { after } from "node:test";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-} from '@chakra-ui/react'
-import {
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  FormHelperText,
-} from '@chakra-ui/react'
-import { Input } from '@chakra-ui/react'
+
 import { useDisclosure } from '@chakra-ui/react'
 import { useToast } from '@chakra-ui/react'
+
+import { AddTodoModal } from "@/components/modals/AddTodoModal";
 
 
 
@@ -56,81 +43,7 @@ const Todo = (props) => {
 };
 
 
-// modal
-const AddTodoModal = (props) => {
-  const [inputText, setInputText] = React.useState("");
 
-  // メソッドたちを受け渡し
-  const isOpen = props.isOpen;
-  const onClose = () => {
-    props.onClose();
-  };
-  const initialRef = props.initialFocusRef;
-  const finalRef = props.finalFocusRef;
-
-  const handleAddTextSubmit = (text: string) => {
-    const newTodos = [...props.todos];
-    newTodos.push({
-      id: Date.now(),
-      text: text,
-      isCompleted: false
-    });
-    props.setTodos(newTodos);
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleAddTextSubmit(inputText);
-  }
-
-  const handleTextChange = (e) => {
-    setInputText(e.currentTarget.value);
-  }
-
-  const toast = useToast();
-
-  return (
-
-    <Modal
-      initialFocusRef={initialRef}
-      finalFocusRef={finalRef}
-      isOpen={isOpen}
-      onClose={onClose}
-    >
-      <ModalOverlay />
-      <ModalContent>
-        <form onSubmit={handleSubmit}>
-          <ModalHeader>タスクの追加</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <Input
-                ref={initialRef}
-                placeholder='TODOを入力...'
-                value={inputText}
-                onChange={handleTextChange}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose} mr={3}>キャンセル</Button>
-            <Button colorScheme='blue' type="submit"
-              onClick={() =>
-                toast({
-                  title: 'TODOタスクを保存しました',
-                  status: 'success',
-                  duration: 3000,
-                  isClosable: true,
-                })
-              }>
-              保存
-            </Button>
-          </ModalFooter>
-        </form>
-      </ModalContent>
-    </Modal>
-  );
-};
 
 
 
