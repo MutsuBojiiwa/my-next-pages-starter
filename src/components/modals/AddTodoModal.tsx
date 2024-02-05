@@ -1,5 +1,7 @@
 import React, { useState, useMemo } from 'react';
 
+import axios from 'axios';
+
 import { Heading, Box, Button, Text, Center } from '@chakra-ui/react';
 import { Input } from '@chakra-ui/react';
 import {
@@ -22,7 +24,7 @@ import { useToast } from '@chakra-ui/react';
 
 
 // modal
-export const AddTodoModal = (props) => {
+export const AddTodoModal = (props: any) => {
   const [inputText, setInputText] = React.useState("");
 
   // メソッドたちを受け渡し
@@ -38,19 +40,24 @@ export const AddTodoModal = (props) => {
     const newTodos = [...props.todos];
     newTodos.push({
       id: Date.now(),
-      text: text,
+      title: text,
       isCompleted: false
     });
     props.setTodos(newTodos);
+    console.log("props.todos : " + props.todos);
+    axios.post('http://api.laravel-v10-starter.localhost/api/todos', { title: "test", is_conpleted: false })
+      .then(response => console.log('New todo created:', response.data.todo))
+      .catch(error => console.error('Error creating todo:', error));
+
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: any) => {
     e.preventDefault();
     handleAddTextSubmit(inputText);
     setInputText("");
   }
 
-  const handleTextChange = (e) => {
+  const handleTextChange = (e: any) => {
     setInputText(e.currentTarget.value);
   }
 

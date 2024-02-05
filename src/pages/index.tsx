@@ -1,7 +1,10 @@
 import Head from "next/head";
 import Image from "next/image";
 import styles from "@/styles/Home.module.css";
-import React, { useState, useMemo } from 'react';
+
+import axios from "axios";
+
+import React, { useState, useMemo, useEffect } from 'react';
 
 import { Heading, Box, Button, Text, Center } from '@chakra-ui/react';
 import { ChakraProvider } from '@chakra-ui/react'
@@ -14,6 +17,7 @@ import { useToast } from '@chakra-ui/react'
 
 import { AddTodoModal } from "@/components/modals/AddTodoModal";
 
+const url = "http://api.laravel-v10-starter.localhost/api/todos";
 
 
 // 現在時刻コンポーネント
@@ -29,7 +33,7 @@ const CurrentDate = () => {
 
 
 // to do コンポーネント
-const Todo = (props) => {
+const Todo = (props: any) => {
   const handleCheckboxChange = () => {
     props.onCheckboxChange(props.todo.id);
   }
@@ -48,19 +52,26 @@ const Todo = (props) => {
 
 
 
-
+type Todo = {
+  id: number,
+  title: string,
+  is_completed: boolean,
+  created_at?: Date,
+  updated_at?: Date
+}
 
 
 // 全体の表示
 export default function Home() {
-  const [todos, setTodos] = useState([
-    { id: 0, text: "食料品を買い物リストに追加する", isCompleted: false },
-    { id: 1, text: "新しい調味料を試してみる", isCompleted: false },
-    { id: 2, text: "週末のためにおやつを購入する", isCompleted: false },
-    { id: 3, text: "食料品店で買い物リストのアイテムを購入する", isCompleted: true },
-    { id: 4, text: "特別なレシピに必要な材料を揃える", isCompleted: true },
-    { id: 5, text: "お気に入りのコーヒー豆を補充する", isCompleted: true },
-  ]);
+  const [todos, setTodos] = useState<Todo[]>([]);
+
+
+  useEffect(() => {
+    // APIからデータを取得するためのAxiosリクエスト
+    axios.get(url)
+      .then(response => setTodos(response.data.todos))
+      .catch(error => console.error('Error fetching todos:', error));
+  }, []);
 
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -76,8 +87,8 @@ export default function Home() {
     const newTodos = todos.map((todo) => {
       return {
         id: todo.id,
-        text: todo.text,
-        isCompleted: todo.id === id ? !todo.isCompleted : todo.isCompleted
+        title: todo.title,
+        is_completed: todo.id === id ? !todo.is_completed : todo.is_completed
       };
     });
     setTodos(newTodos);
@@ -85,7 +96,7 @@ export default function Home() {
 
   const pendingTodos = useMemo(() => {
     const pendingItems = todos.map(todo => {
-      if (!todo.isCompleted) {
+      if (!todo.is_completed) {
         return (
           <Todo
             key={todo.id}
@@ -101,7 +112,7 @@ export default function Home() {
 
   const completedTodos = useMemo(() => {
     const completedItems = todos.map((todo) => {
-      if (todo.isCompleted) {
+      if (todo.is_completed) {
         return (
           <Todo
             key={todo.id}
@@ -118,6 +129,7 @@ export default function Home() {
 
 
   const toast = useToast();
+
 
 
 
@@ -164,6 +176,7 @@ export default function Home() {
           onClose={onClose}
           todos={todos}
           setTodos={setTodos}
+          url={url}
         />
 
       </Box>
