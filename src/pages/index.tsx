@@ -129,7 +129,6 @@ export default function Home() {
 
 
 
-
   return (
     <ChakraProvider>
       <Box w="fit-content" m="40px auto">
