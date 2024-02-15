@@ -42,10 +42,10 @@ export const AddTodoModal = (props: any) => {
     await axios.post(props.url, { title: text, is_completed: false })
       .then(response => console.log('New todo created:', response.data))
       .catch(error => console.error('Error creating todo:', error));
-      await axios.get(props.url)
+    await axios.get(props.url)
       .then(response => {
-        console.log(response.data); // デバッグ目的でログを出力
-        props.setTodos(response.data.todos); // 仮定されるtodosのデータ構造に合わせて修正
+        console.log('GETしてるはず:', response.data); // デバッグ目的でログを出力
+        props.setTodos(response.data); // 仮定されるtodosのデータ構造に合わせて修正
       })
       .catch(error => console.error('Error fetching todos:', error));
   }
