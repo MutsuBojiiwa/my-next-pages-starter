@@ -1,6 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 import axios from 'axios';
+
+import useSWR, { mutate } from 'swr'
 
 import { Heading, Box, Button, Text, Center } from '@chakra-ui/react';
 import { Input } from '@chakra-ui/react';
@@ -36,20 +38,18 @@ export const AddTodoModal = (props: any) => {
   const initialRef = props.initialFocusRef;
   const finalRef = props.finalFocusRef;
 
-  const handleAddTextSubmit = (text: string) => {
-    const newTodos = [...props.todos];
-    newTodos.push({
-      id: Date.now(),
-      title: text,
-      isCompleted: false
-    });
-    props.setTodos(newTodos);
-    console.log("props.todos : " + props.todos);
-    axios.post('http://api.laravel-v10-starter.localhost/api/todos', { title: "test", is_conpleted: false })
-      .then(response => console.log('New todo created:', response.data.todo))
+  const handleAddTextSubmit = async (text: string) => {
+    await axios.post(props.url, { title: text, is_completed: false })
+      .then(response => console.log('New todo created:', response.data))
       .catch(error => console.error('Error creating todo:', error));
-
+      await axios.get(props.url)
+      .then(response => {
+        console.log(response.data); // デバッグ目的でログを出力
+        props.setTodos(response.data.todos); // 仮定されるtodosのデータ構造に合わせて修正
+      })
+      .catch(error => console.error('Error fetching todos:', error));
   }
+
 
   const handleSubmit = (e: any) => {
     e.preventDefault();

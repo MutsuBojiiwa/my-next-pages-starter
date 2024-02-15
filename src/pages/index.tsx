@@ -14,7 +14,7 @@ import { useToast } from '@chakra-ui/react'
 
 import { AddTodoModal } from "@/components/modals/AddTodoModal";
 
-const url = "http://api.laravel-v10-starter.localhost/api/todos";
+const url = "http://api.laravel-v10-starter.localhost/api/todo";
 
 
 // 現在時刻コンポーネント
@@ -36,9 +36,9 @@ const Todo = (props: any) => {
   }
   return (
     <Checkbox spacing={5}
-      defaultChecked={props.todo.isCompleted}
+      defaultChecked={props.todo.is_completed}
       onChange={handleCheckboxChange}>
-      {props.todo.text}
+      {props.todo.title}
     </Checkbox>
   );
 };
@@ -62,11 +62,10 @@ type Todo = {
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([]);
 
-
   useEffect(() => {
     // APIからデータを取得するためのAxiosリクエスト
     axios.get(url)
-      .then(response => setTodos(response.data.todos))
+      .then(response => setTodos(response.data))
       .catch(error => console.error('Error fetching todos:', error));
   }, []);
 
@@ -81,6 +80,7 @@ export default function Home() {
 
 
   const handleTodoCheckboxChange = (id: number) => {
+    console.log(todos);
     const newTodos = todos.map((todo) => {
       return {
         id: todo.id,
@@ -92,6 +92,7 @@ export default function Home() {
   };
 
   const pendingTodos = useMemo(() => {
+    if (!todos) return []; // todosが未定義の場合は空の配列を返す
     const pendingItems = todos.map(todo => {
       if (!todo.is_completed) {
         return (
@@ -102,13 +103,14 @@ export default function Home() {
           />
         );
       }
-    });
-    return pendingItems
+      return null;
+    }).filter(item => item !== null);
+    return pendingItems;
   }, [todos]);
-
-
+  
   const completedTodos = useMemo(() => {
-    const completedItems = todos.map((todo) => {
+    if (!todos) return []; // todosが未定義の場合は空の配列を返す
+    const completedItems = todos.map(todo => {
       if (todo.is_completed) {
         return (
           <Todo
@@ -118,7 +120,8 @@ export default function Home() {
           />
         );
       }
-    });
+      return null;
+    }).filter(item => item !== null);
     return completedItems;
   }, [todos]);
 
