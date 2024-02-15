@@ -74,7 +74,11 @@ export default function Home() {
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
 
-
+  const isCompletedSwitch = (todo: Todo) => {
+    axios.put(`${url}/${todo.id}`, { is_completed: todo.is_completed })
+      .then(response => console.log(response.data))
+      .catch(error => console.error('Error updating todo:', error));
+  };
 
 
 
@@ -89,6 +93,7 @@ export default function Home() {
       };
     });
     setTodos(newTodos);
+    isCompletedSwitch(newTodos.find(todo => todo.id === id)!);
   };
 
   const pendingTodos = useMemo(() => {
@@ -107,7 +112,7 @@ export default function Home() {
     }).filter(item => item !== null);
     return pendingItems;
   }, [todos]);
-  
+
   const completedTodos = useMemo(() => {
     if (!todos) return []; // todosが未定義の場合は空の配列を返す
     const completedItems = todos.map(todo => {

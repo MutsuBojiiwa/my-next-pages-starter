@@ -40,7 +40,7 @@ export const AddTodoModal = (props: any) => {
 
   const handleAddTextSubmit = async (text: string) => {
     await axios.post(props.url, { title: text, is_completed: false })
-      .then(response => console.log('New todo created:', response.data))
+      .then(response => console.log('POSTしたデータ', response.data))
       .catch(error => console.error('Error creating todo:', error));
     await axios.get(props.url)
       .then(response => {
